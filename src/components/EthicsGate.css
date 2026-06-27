@@ -1,0 +1,98 @@
+.ethics-gate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(at 100% 100%, hsla(253,16%,7%,0.05) 0, transparent 50%), 
+    radial-gradient(at 0% 100%, hsla(225,39%,30%,0.05) 0, transparent 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.ethics-gate-content {
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: auto;
+}
+
+.ethics-gate-content h2 {
+  text-align: center;
+  font-size: 1.75rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.guideline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.guideline-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: var(--bg-color);
+  border-radius: 0.75rem;
+}
+
+.guideline-icon {
+  font-size: 1.5rem;
+  margin-top: 0.2rem;
+}
+
+.guideline-item h3 {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.guideline-item p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.accept-btn {
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1.25rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.accept-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+@media (max-width: 600px) {
+  .ethics-gate-content {
+    padding: 1.5rem;
+  }
+  .guideline-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
