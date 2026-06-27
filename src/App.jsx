@@ -54,7 +54,7 @@ function App() {
       <div className="app-wrapper">
         <header className="header container" style={{ padding: '1rem 2rem' }}>
           <div className="logo-area">
-            <h1><a href="#" style={{ color: 'inherit' }}>학습용 웹앱 포털</a> / 관리자 모드</h1>
+            <h1><a href="#" style={{ color: 'inherit' }}>박세원 선생님의 웹앱 모음</a> / 관리자 모드</h1>
           </div>
         </header>
         <Admin />
@@ -70,10 +70,14 @@ function App() {
     <div className="app-wrapper">
       <header className="header container">
         <div className="logo-area">
-          <h1>학습용 웹앱 포털</h1>
-          <p>선생님이 만든 다양한 교육용 앱을 한 곳에서 만나보세요!</p>
+          <h1>박세원 선생님의 웹앱 모음</h1>
         </div>
       </header>
+
+      <section className="hero container">
+        <h2>박세원 선생님의 웹앱 모음</h2>
+        <p>선생님이 만든 다양한 교육용 앱을 한 곳에서 만나보세요!</p>
+      </section>
 
       <main className="main-content container">
         <div className="apps-grid">
