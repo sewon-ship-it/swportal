@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
 import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import './Admin.css';
 
 const Admin = () => {
   const [user, setUser] = useState(null);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [apps, setApps] = useState([]);
   
   // New App form state
@@ -34,10 +32,10 @@ const Admin = () => {
     setApps(appsList);
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithPopup(auth, provider);
     } catch (error) {
       alert("로그인 실패: " + error.message);
     }
@@ -79,24 +77,15 @@ const Admin = () => {
   if (!user) {
     return (
       <div className="admin-container">
-        <form className="admin-login-form" onSubmit={handleLogin}>
+        <div className="admin-login-form">
           <h2>관리자 로그인</h2>
-          <input 
-            type="email" 
-            placeholder="이메일" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            required 
-          />
-          <input 
-            type="password" 
-            placeholder="비밀번호" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            required 
-          />
-          <button type="submit">로그인</button>
-        </form>
+          <p style={{ textAlign: 'center', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
+            선생님 계정(Google)으로 로그인해 주세요.
+          </p>
+          <button onClick={handleGoogleLogin} style={{ padding: '1rem', fontSize: '1.1rem' }}>
+            Google 계정으로 로그인
+          </button>
+        </div>
       </div>
     );
   }
