@@ -15,7 +15,8 @@ const AppCard = ({ app }) => {
     <div className="app-card">
       <div className="app-card-header">
         <h3>{app.title}</h3>
-        <span className="app-objective">{app.objective}</span>
+        <span className="app-objective">{app.grade} {app.subjects?.length > 0 && `· ${app.subjects.join(', ')}`}</span>
+        {app.unit && <div className="app-unit" style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>{app.unit}</div>}
       </div>
       <div className="app-card-body">
         <div className="app-meta">

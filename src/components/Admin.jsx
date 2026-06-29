@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
-import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import './Admin.css';
 
 const Admin = () => {
   const [user, setUser] = useState(null);
   const [apps, setApps] = useState([]);
   
-  // New App form state
+  // New/Edit App form state
   const [title, setTitle] = useState('');
-  const [objective, setObjective] = useState('개념');
+  const [grade, setGrade] = useState('초등 1학년');
+  const [subjects, setSubjects] = useState([]);
+  const [unit, setUnit] = useState('');
   const [difficulty, setDifficulty] = useState('초급');
   const [time, setTime] = useState('5분');
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+
+  const subjectOptions = ['국어', '수학', '사회', '과학', '도덕', '미술', '영어', '음악', '체육', '창체'];
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -45,26 +50,62 @@ const Admin = () => {
     await signOut(auth);
   };
 
-  const handleAddApp = async (e) => {
+  const handleSubjectChange = (e) => {
+    const value = e.target.value;
+    setSubjects(prev => 
+      prev.includes(value) ? prev.filter(s => s !== value) : [...prev, value]
+    );
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await addDoc(collection(db, "apps"), {
+      const appData = {
         title,
-        objective,
+        grade,
+        subjects,
+        unit,
         difficulty,
         time,
         url,
-        createdAt: new Date()
-      });
+        updatedAt: new Date()
+      };
+      
+      if (editingId) {
+        await updateDoc(doc(db, "apps", editingId), appData);
+        alert("앱이 성공적으로 수정되었습니다!");
+      } else {
+        appData.createdAt = new Date();
+        await addDoc(collection(db, "apps"), appData);
+        alert("앱이 성공적으로 등록되었습니다!");
+      }
+
       setTitle('');
+      setGrade('초등 1학년');
+      setSubjects([]);
+      setUnit('');
+      setDifficulty('초급');
+      setTime('5분');
       setUrl('');
+      setEditingId(null);
       fetchApps();
-      alert("앱이 성공적으로 등록되었습니다!");
     } catch (error) {
-      alert("앱 등록 실패: " + error.message);
+      alert("앱 저장 실패: " + error.message);
     }
     setLoading(false);
+  };
+
+  const handleEdit = (app) => {
+    setTitle(app.title || '');
+    setGrade(app.grade || '초등 1학년');
+    setSubjects(app.subjects || []);
+    setUnit(app.unit || '');
+    setDifficulty(app.difficulty || '초급');
+    setTime(app.time || '5분');
+    setUrl(app.url || '');
+    setEditingId(app.id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (id) => {
@@ -99,14 +140,34 @@ const Admin = () => {
 
       <div className="admin-content">
         <div className="add-app-section">
-          <h3>새로운 앱 등록 (Vercel 배포 주소 등)</h3>
-          <form className="add-app-form" onSubmit={handleAddApp}>
+          <h3>{editingId ? '앱 수정' : '새로운 앱 등록'}</h3>
+          <form className="add-app-form" onSubmit={handleSubmit}>
             <input type="text" placeholder="앱 제목" value={title} onChange={e => setTitle(e.target.value)} required />
-            <select value={objective} onChange={e => setObjective(e.target.value)}>
-              <option value="개념">개념</option>
-              <option value="문제풀이">문제풀이</option>
-              <option value="프로젝트">프로젝트</option>
+            
+            <select value={grade} onChange={e => setGrade(e.target.value)}>
+              {[1, 2, 3, 4, 5, 6].map(g => (
+                <option key={g} value={`초등 ${g}학년`}>초등 {g}학년</option>
+              ))}
             </select>
+
+            <div className="subjects-group">
+              <label>과목 선택 (다중 선택 가능)</label>
+              <div className="subjects-checkboxes">
+                {subjectOptions.map(sub => (
+                  <label key={sub} className="subject-label">
+                    <input 
+                      type="checkbox" 
+                      value={sub} 
+                      checked={subjects.includes(sub)}
+                      onChange={handleSubjectChange} 
+                    /> {sub}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <input type="text" placeholder="단원 / 단원명 (예: 1단원. 자연과 우리)" value={unit} onChange={e => setUnit(e.target.value)} />
+
             <select value={difficulty} onChange={e => setDifficulty(e.target.value)}>
               <option value="초급">초급</option>
               <option value="중급">중급</option>
@@ -114,7 +175,16 @@ const Admin = () => {
             </select>
             <input type="text" placeholder="소요 시간 (예: 10분)" value={time} onChange={e => setTime(e.target.value)} required />
             <input type="url" placeholder="앱 URL (https://...)" value={url} onChange={e => setUrl(e.target.value)} required />
-            <button type="submit" disabled={loading}>{loading ? '등록 중...' : '등록하기'}</button>
+            
+            <div className="form-actions">
+              <button type="submit" disabled={loading}>{loading ? '저장 중...' : (editingId ? '수정하기' : '등록하기')}</button>
+              {editingId && (
+                <button type="button" onClick={() => {
+                  setEditingId(null);
+                  setTitle(''); setGrade('초등 1학년'); setSubjects([]); setUnit(''); setDifficulty('초급'); setTime('5분'); setUrl('');
+                }} className="cancel-btn">취소</button>
+              )}
+            </div>
           </form>
         </div>
 
@@ -125,10 +195,14 @@ const Admin = () => {
               <li key={app.id} className="admin-app-item">
                 <div className="app-info">
                   <strong>{app.title}</strong>
-                  <span>({app.objective} / {app.difficulty} / {app.time})</span>
+                  <span>({app.grade} / {app.subjects?.join(', ')} / {app.difficulty} / {app.time})</span>
+                  {app.unit && <span className="app-unit-text">단원: {app.unit}</span>}
                   <a href={app.url} target="_blank" rel="noreferrer">링크 확인</a>
                 </div>
-                <button onClick={() => handleDelete(app.id)} className="delete-btn">삭제</button>
+                <div className="admin-actions">
+                  <button onClick={() => handleEdit(app)} className="edit-btn">수정</button>
+                  <button onClick={() => handleDelete(app.id)} className="delete-btn">삭제</button>
+                </div>
               </li>
             ))}
             {apps.length === 0 && <p>등록된 앱이 없습니다.</p>}
