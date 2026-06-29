@@ -19,7 +19,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  const subjectOptions = ['국어', '수학', '사회', '과학', '도덕', '미술', '영어', '음악', '체육', '창체'];
+  const subjectOptions = ['국어', '수학', '사회', '과학', '도덕', '미술', '영어', '음악', '체육', '창체', '그 외: 생활지도'];
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
