@@ -10,7 +10,7 @@ const Admin = () => {
   
   // New/Edit App form state
   const [title, setTitle] = useState('');
-  const [grade, setGrade] = useState('초등 1학년');
+  const [grade, setGrade] = useState('전 학년');
   const [subjects, setSubjects] = useState([]);
   const [unit, setUnit] = useState('');
   const [difficulty, setDifficulty] = useState('초급');
@@ -82,7 +82,7 @@ const Admin = () => {
       }
 
       setTitle('');
-      setGrade('초등 1학년');
+      setGrade('전 학년');
       setSubjects([]);
       setUnit('');
       setDifficulty('초급');
@@ -98,7 +98,7 @@ const Admin = () => {
 
   const handleEdit = (app) => {
     setTitle(app.title || '');
-    setGrade(app.grade || '초등 1학년');
+    setGrade(app.grade || '전 학년');
     setSubjects(app.subjects || []);
     setUnit(app.unit || '');
     setDifficulty(app.difficulty || '초급');
@@ -145,6 +145,7 @@ const Admin = () => {
             <input type="text" placeholder="앱 제목" value={title} onChange={e => setTitle(e.target.value)} required />
             
             <select value={grade} onChange={e => setGrade(e.target.value)}>
+              <option value="전 학년">전 학년</option>
               {[1, 2, 3, 4, 5, 6].map(g => (
                 <option key={g} value={`초등 ${g}학년`}>초등 {g}학년</option>
               ))}
@@ -181,7 +182,7 @@ const Admin = () => {
               {editingId && (
                 <button type="button" onClick={() => {
                   setEditingId(null);
-                  setTitle(''); setGrade('초등 1학년'); setSubjects([]); setUnit(''); setDifficulty('초급'); setTime('5분'); setUrl('');
+                  setTitle(''); setGrade('전 학년'); setSubjects([]); setUnit(''); setDifficulty('초급'); setTime('5분'); setUrl('');
                 }} className="cancel-btn">취소</button>
               )}
             </div>
